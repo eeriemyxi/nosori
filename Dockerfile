@@ -6,4 +6,4 @@ COPY src/ ./src
 
 RUN bun install
 
-CMD ["bun", "run", "src/index.js"]
+CMD ["bun", "run", "src/index.ts"]

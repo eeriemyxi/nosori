@@ -5,6 +5,7 @@ import * as pug from "pug";
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import { createBunWebSocket } from "hono/bun";
+import {getCookie,setCookie} from 'hono/cookie'
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
 const app = new Hono();
@@ -51,13 +52,30 @@ const ws = app.get(
 );
 
 app.get("/", async (c) => {
+  const from_ = getCookie(c, 'from') || 0
+  const to = getCookie(c, 'to') || -1
+  const limit = getCookie(c, 'limit') || -1
+  const lookahead = getCookie(c, 'lookahead') || 5
+
   return c.html(
-    pug.compileFile(`${constants.TEMPLATES_PATH}/main.pug`)(),
+    pug.compileFile(`${constants.TEMPLATES_PATH}/main.pug`)({
+      from: from_,
+      to: to,
+      limit: limit,
+      lookahead: lookahead,
+    }
+    ),
   );
 });
 
 app.get("/media", async (c) => {
   const query = c.req.query();
+  const oneYearInSeconds = 60 * 60 * 24 * 365
+
+  setCookie(c, 'from', query.from || 0, { maxAge: oneYearInSeconds })
+  setCookie(c, 'to', query.to || -1, { maxAge: oneYearInSeconds })
+  setCookie(c, 'limit', query.limit || -1, { maxAge: oneYearInSeconds })
+  setCookie(c, 'lookahead', query.lookahead || 5, { maxAge: oneYearInSeconds })
 
   return c.html(
     pug.compileFile(`${constants.TEMPLATES_PATH}/show-media.pug`)({
@@ -65,6 +83,7 @@ app.get("/media", async (c) => {
       from: query.from,
       to: query.to,
       limit: query.limit,
+      lookahead: query.lookahead,
     }),
   );
 });

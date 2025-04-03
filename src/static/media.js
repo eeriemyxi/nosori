@@ -84,7 +84,7 @@ function getMediaType(fileName, includeMime = false) {
     : mimeTypes[extension].split("/")[0];
 }
 
-async function showMedia(userId, from, to, limit) {
+async function showMedia(userId, from, to, limit, lookahead) {
   console.log(
     "Showing for userId=%s from=%s to=%s limit=%s",
     userId,
@@ -99,7 +99,7 @@ async function showMedia(userId, from, to, limit) {
   }
 
   let cycle = 0;
-  const k = 5;
+  const k = lookahead;
 
   for await (const urls of take(iterateUserMedia(userId, from, to, limit), k)) {
     console.log("Cycle: %s", cycle);
@@ -146,4 +146,5 @@ async function showMedia(userId, from, to, limit) {
     }
 
     cycle++;
-  }}
+  }
+}
