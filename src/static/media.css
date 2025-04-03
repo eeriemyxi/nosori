@@ -1,0 +1,9 @@
+body {
+  margin: 0;
+}
+
+.media {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}

@@ -1,0 +1,14 @@
+doctype html
+
+html
+  head
+    link(rel="stylesheet", href="/static/main.css")
+  body
+    .div.form-container
+      form(action="/media" method="get")
+        input(type="text" name="userId" placeholder="Enter User ID" required)
+        input(type="number" name="from" placeholder="From (Page Number)" value="0")
+        input(type="number" name="to" placeholder="To (Page Number)" value="-1")
+        input(type="number" name="limit" placeholder="Limit (Total Posts To Check)" value="-1")
+
+        button(type="submit") Fetch Pictures

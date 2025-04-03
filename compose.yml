@@ -1,0 +1,12 @@
+name: nosori
+
+services:
+  server:
+     build: 
+       context: .
+       target: production
+     environment:
+       HOST: 0.0.0.0
+       PORT: 80
+     ports:
+       - ${PORT:-9898}:80
