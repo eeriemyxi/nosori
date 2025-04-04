@@ -1,18 +1,26 @@
-import * as constants from "./const.ts";
-
 export const getUserPosts = async (
+  base_domain: string,
+  base_api_path: string,
   serviceId: string,
   userId: string,
   offset: number = 0,
 ) => {
-  const reqUrl = new URL(constants.BASE_API_URL);
-  reqUrl.pathname += `${serviceId}/user/${userId}`;
+  const reqUrl = new URL(base_api_path.trim(), base_domain.trim());
+
+  if (reqUrl.pathname.charAt(reqUrl.pathname.length - 1) != "/") {
+    reqUrl.pathname += "/";
+  }
+
+  reqUrl.pathname += `${serviceId.trim()}/user/${userId.trim()}`;
   reqUrl.searchParams.append("o", offset.toString());
 
   return await fetch(reqUrl);
 };
 
 export const iterateUserPosts = async function* (
+  base_domain: string,
+  base_api_path: string,
+  service_name: string,
   userId: string,
   from: number = 0,
   to: number = 0,
@@ -22,7 +30,9 @@ export const iterateUserPosts = async function* (
     if (limit == 0) break;
 
     const posts_res = await getUserPosts(
-      constants.SERVICE_NAME,
+      base_domain,
+      base_api_path,
+      service_name,
       userId,
       50 * i,
     );
@@ -38,7 +48,7 @@ export const iterateUserPosts = async function* (
   }
 };
 
-export const makeFileLink = (path: string) => {
-  const reqUrl = new URL(path, constants.BASE_URL);
+export const makeFileLink = (base_domain: string, path: string) => {
+  const reqUrl = new URL(path, base_domain);
   return reqUrl;
 };

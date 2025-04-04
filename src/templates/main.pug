@@ -3,13 +3,36 @@ doctype html
 html
   head
     link(rel="stylesheet", href="/static/main.css")
+    link(rel="stylesheet", href="/static/popup.css")
   body
-    .div.form-container
-      form(action="/media" method="get")
-        input(type="text" name="userId" placeholder="Enter User ID" required)
-        input(type="number" name="from" placeholder="From (Page Number)" value=from required)
-        input(type="number" name="to" placeholder="To (Page Number)" value=to required)
-        input(type="number" name="limit" placeholder="Limit (Total Posts To Check)" value=limit required)
-        input(type="number" name="lookahead" placeholder="Prefetch Amount (Total Posts to Load per Chunk)" value=lookahead required)
+    .base-container
+      #popup
+        #popup-block
+          .form-container
+            form#sets-form
+              .number-input
+                .number-input
+                  button(onclick="const input = this.parentNode.querySelector('input[type=number]');input.stepDown();input.dispatchEvent(new Event('input', { bubbles: true }));") -
+                  input#activePresetIn(type="number" name="activePreset" placeholder="Preset", min="1", max="10", required)
+                  button(onclick="const input = this.parentNode.querySelector('input[type=number]');input.stepUp();input.dispatchEvent(new Event('input', { bubbles: true }));") +
+              input(type="text" name="baseDomain" placeholder="Base Domain", required)
+              input(type="text" name="baseApiPath" placeholder="API Path (Relative)", required)
+              input(type="text" name="serviceName" placeholder="Service Name", required)
 
-        button(type="submit") Fetch Pictures
+          button(onclick="closePopup()", id="close-popup") Save and Close
+
+      main
+        .form-container
+          form(action="/media" method="get" onsubmit="handleMainSubmit(event)")#main-form
+            input(type="text" name="userId" placeholder="Enter User ID" required)
+            input(type="number" name="from" placeholder="From (Page Number)" required)
+            input(type="number" name="to" placeholder="To (Page Number)" required)
+            input(type="number" name="limit" placeholder="Limit (Total Posts To Check)" required)
+            input(type="number" name="lookahead" placeholder="Prefetch Amount (Total Posts to Load per Chunk)" required)
+
+            button(type="submit") Fetch Pictures
+      aside
+        button(onclick="showPopup()", id="open-popup", aria-label="Settings")
+          img(src="/static/settings.svg", alt="Icon", width="50", height="50")
+      
+      script(src="/static/main.js")

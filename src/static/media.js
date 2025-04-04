@@ -24,10 +24,26 @@ async function* iterateNosoriWS(kind, args) {
   }
 }
 
-async function* iterateUserMedia(userId, from, to, limit) {
+async function* iterateUserMedia(
+  baseDomain,
+  baseApiPath,
+  serviceName,
+  userId,
+  from,
+  to,
+  limit,
+) {
   const data = {
     kind: "iterateUserMedia",
-    args: { userId: userId, from: from, to: to, limit: limit },
+    args: {
+      userId: userId,
+      from: from,
+      to: to,
+      limit: limit,
+      baseDomain: baseDomain,
+      baseApiPath: baseApiPath,
+      serviceName: serviceName,
+    },
   };
 
   for await (const url of iterateNosoriWS(...Object.values(data))) {
@@ -84,14 +100,27 @@ function getMediaType(fileName, includeMime = false) {
     : mimeTypes[extension].split("/")[0];
 }
 
-async function showMedia(userId, from, to, limit, lookahead) {
+async function showMedia(
+  baseDomain,
+  baseApiPath,
+  serviceName,
+  userId,
+  from,
+  to,
+  limit,
+  lookahead,
+) {
   console.log(
-    "Showing for userId=%s from=%s to=%s limit=%s",
+    "Showing for baseDomain=%s baseApiPath=%s serviceName=%s userId=%s from=%s to=%s limit=%s",
+    baseDomain,
+    baseApiPath,
+    serviceName,
     userId,
     from,
     to,
     limit,
   );
+
   media_container = document.querySelector("div.media");
   if (!media_container) {
     console.warn("Media container not found.");
@@ -101,7 +130,20 @@ async function showMedia(userId, from, to, limit, lookahead) {
   let cycle = 0;
   const k = lookahead;
 
-  for await (const urls of take(iterateUserMedia(userId, from, to, limit), k)) {
+  for await (
+    const urls of take(
+      iterateUserMedia(
+        baseDomain,
+        baseApiPath,
+        serviceName,
+        userId,
+        from,
+        to,
+        limit,
+      ),
+      k,
+    )
+  ) {
     console.log("Cycle: %s", cycle);
 
     let loaded = urls.length;
