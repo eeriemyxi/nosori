@@ -49,6 +49,11 @@ export const iterateUserPosts = async function* (
 };
 
 export const makeFileLink = (base_domain: string, path: string) => {
+  // TODO: Support for thumbnails
+
+  if (path.slice(0, 5) != "/data") path = "/data" + path;
+
   const reqUrl = new URL(path, base_domain);
+
   return reqUrl;
 };
