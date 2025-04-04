@@ -1,9 +1,11 @@
 # Nosori
 
-![](https://i.imgur.com/CsbGEtk.png) ![](https://i.imgur.com/4it7c8c.jpeg)
+![](https://i.imgur.com/FNjIHE4.png) ![](https://i.imgur.com/9GSXx0f.png)
+![](https://i.imgur.com/4it7c8c.jpeg)
 
-Nosori is a web-server based image crawler for <https://coomer.su>. It displays
-them in a separate page one after another very efficiently.
+Nosori is a HTTP and WebSocket server based online image viewer for <https://coomer.su> and
+<https://kemono.su>. It embeds all images and videos from a user in a single
+page--making it a very convenient experience to view them all.
 
 # Docker
 
