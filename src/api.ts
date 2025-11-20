@@ -11,10 +11,10 @@ export const getUserPosts = async (
     reqUrl.pathname += "/";
   }
 
-  reqUrl.pathname += `${serviceId.trim()}/user/${userId.trim()}`;
+  reqUrl.pathname += `${serviceId.trim()}/user/${userId.trim()}/posts`;
   reqUrl.searchParams.append("o", offset.toString());
 
-  return await fetch(reqUrl);
+  return await fetch(reqUrl, {headers: {"Accept":"text/css"}});
 };
 
 export const iterateUserPosts = async function* (
@@ -36,6 +36,8 @@ export const iterateUserPosts = async function* (
       userId,
       50 * i,
     );
+
+    console.log(posts_res)
     const posts = await posts_res.json();
 
     if (posts.length == 0) break;

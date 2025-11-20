@@ -12,7 +12,7 @@ const INPUT_DEFAULTS = {
   to: "-1",
   limit: "-1",
   lookahead: "5",
-  baseDomain: "https://coomer.su",
+  baseDomain: "https://coomer.st",
   baseApiPath: "/api/v1",
   serviceName: "onlyfans",
 };
