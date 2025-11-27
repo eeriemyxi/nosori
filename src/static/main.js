@@ -1,11 +1,9 @@
 const popup = document.querySelector("#popup");
-
 const mainForm = document.querySelector("#main-form");
 const setsForm = document.querySelector("#sets-form");
-
 const activePresetIn = document.querySelector("#activePresetIn");
 
-const INPUT_DEFAULTS = {
+const DEFAULT_PRESET = {
   activePreset: "1",
   userId: "",
   from: "0",
@@ -17,115 +15,68 @@ const INPUT_DEFAULTS = {
   serviceName: "onlyfans",
 };
 
-updateInputs(mainForm);
-
-setsForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-});
-
+addEventListener("load", (event) => updateInputs());
+setsForm.addEventListener("submit", (event) => event.preventDefault());
 activePresetIn.addEventListener("input", () => {
-  updateInputs(setsForm, activePresetIn.value);
-  updateInputs(mainForm, activePresetIn.value);
+  if (getPreset(activePresetIn.value)) updateInputs(activePresetIn.value);
 });
 
-function* iterateInputs(form) {
-  for (const ele of form.elements) {
-    if (ele.tagName != "INPUT" || !ele.name) continue;
-    yield ele;
+function* iterateInputs(...forms) {
+  for (const form of forms) {
+    for (const ele of form.elements) {
+      if (ele.tagName != "INPUT" || !ele.name) continue;
+      yield ele;
+    }
   }
 }
 
-function updateInputs(form, preset_name = null) {
-  const activePresetName = preset_name || getActivePresetName();
-  const preset = getPreset(activePresetName);
-
-  console.log("Updating for activePresetName=%s", activePresetName);
-
-  for (const input of iterateInputs(form)) {
-    if (input.name == "activePreset") continue;
-    input.value = preset[input.name] || INPUT_DEFAULTS[input.name];
+function updateInputs(customActivePreset = null) {
+  const activePreset =
+    customActivePreset || localStorage.getItem("activePreset");
+  const preset = getPreset(activePreset)
+    ? getPreset(activePreset)
+    : DEFAULT_PRESET;
+  for (const inp of iterateInputs(mainForm, setsForm)) {
+    inp.value = preset[inp.name];
   }
 }
 
-function getActivePresetName() {
-  return localStorage.getItem("activePreset") || INPUT_DEFAULTS["activePreset"];
+function dumpInputsAsPreset() {
+  const preset = {};
+  for (const inp of iterateInputs(mainForm, setsForm))
+    preset[inp.name] = inp.value;
+  return preset;
 }
 
-function getPresets() {
-  return JSON.parse(localStorage.getItem("presets") || "{}");
+function getPreset(name) {
+  return JSON.parse(localStorage.getItem("preset-" + name));
 }
 
-function getPreset(preset = null) {
-  const presets = getPresets();
-  return presets[preset || "activePreset"] || {};
-}
-
-function savePreset(preset, value = {}) {
-  const presets = getPresets();
-  console.log("preset=", preset);
-  console.log("presets=", presets);
-
-  const preset_value = presets[preset] || {};
-
-  const merged = Object.assign({}, preset_value, value);
-
-  presets[preset] = merged;
-  console.log("updated presets=", presets);
-
-  localStorage.setItem("presets", JSON.stringify(presets));
-  localStorage.setItem("activePreset", preset);
+function savePreset(name, data) {
+  localStorage.setItem("preset-" + name, JSON.stringify(data));
 }
 
 function showPopup() {
-  const activePresetName = getActivePresetName();
-  const preset = getPreset(activePresetName);
-
-  for (const input of iterateInputs(setsForm)) {
-    input.value = preset[input.name] ||
-      INPUT_DEFAULTS[input.name];
-  }
-
   popup.style.display = "flex";
 }
 
 function closePopup() {
-  const preset = {};
-
-  for (const input of iterateInputs(setsForm)) {
-    preset[input.name] = input.value;
-  }
-
-  for (const input of iterateInputs(mainForm)) {
-    preset[input.name] = input.value;
-  }
-
-  savePreset(activePresetIn.value, preset);
-  updateInputs(mainForm);
-
   popup.style.display = "none";
+
+  localStorage.setItem("activePreset", activePresetIn.value);
+  savePreset(activePresetIn.value, dumpInputsAsPreset());
 }
 
 function handleMainSubmit(event) {
   event.preventDefault();
 
-  const activePresetName = getActivePresetName();
-  const preset = getPreset(activePresetName);
-
-  for (const input of iterateInputs(mainForm)) {
-    preset[input.name] = input.value;
-  }
-
-  for (const input of iterateInputs(setsForm)) {
-    preset[input.name] = input.value;
-  }
-
-  savePreset(activePresetName, preset);
-
-  const params = (new URLSearchParams(preset)).toString();
+  const preset = dumpInputsAsPreset();
+  const params = new URLSearchParams(preset).toString();
 
   if (event.target.action.indexOf("?") != -1) {
     event.target.action =
-      event.target.action.slice(0, event.target.action.indexOf("?")) + "?" +
+      event.target.action.slice(0, event.target.action.indexOf("?")) +
+      "?" +
       params;
   } else {
     event.target.action += "?" + params;
