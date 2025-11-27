@@ -24,22 +24,21 @@ const ws = app.get(
 
         switch (req.kind) {
           case "iterateUserMedia":
-            for await (
-              const post of api.iterateUserPosts(
-                args.baseDomain,
-                args.baseApiPath,
-                args.serviceName,
-                args.userId,
-                args.from,
-                args.to,
-                args.limit,
-              )
-            ) {
+            for await (const post of api.iterateUserPosts(
+              args.baseDomain,
+              args.baseApiPath,
+              args.serviceName,
+              args.userId,
+              args.from,
+              args.to,
+              args.limit,
+            )) {
               console.log(post);
 
               if (!utils.isObjEmpty(post.page.file)) {
                 ws.send(
-                  api.makeFileLink(args.baseDomain, post.page.file.path)
+                  api
+                    .makeFileLink(args.baseDomain, post.page.file.path)
                     .toString(),
                 );
               }
@@ -60,9 +59,7 @@ const ws = app.get(
 );
 
 app.get("/", async (c) => {
-  return c.html(
-    pug.compileFile(`${constants.TEMPLATES_PATH}/main.pug`)(),
-  );
+  return c.html(pug.compileFile(`${constants.TEMPLATES_PATH}/main.pug`)());
 });
 
 app.get("/media", async (c) => {

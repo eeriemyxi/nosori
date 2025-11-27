@@ -71,27 +71,23 @@ function asleep(ms) {
 
 function getMediaType(fileName, includeMime = false) {
   const mimeTypes = {
-    "jpg": "image/jpeg",
-    "jpeg": "image/jpeg",
-    "png": "image/png",
-    "gif": "image/gif",
-    "webp": "image/webp",
-    "svg": "image/svg+xml",
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+    gif: "image/gif",
+    webp: "image/webp",
+    svg: "image/svg+xml",
 
-    "mp4": "video/mp4",
-    "mov": "video/quicktime",
-    "avi": "video/x-msvideo",
-    "mkv": "video/x-matroska",
-    "webm": "video/webm",
-    "flv": "video/x-flv",
-    "wmv": "video/x-ms-wmv",
+    mp4: "video/mp4",
+    mov: "video/quicktime",
+    avi: "video/x-msvideo",
+    mkv: "video/x-matroska",
+    webm: "video/webm",
+    flv: "video/x-flv",
+    wmv: "video/x-ms-wmv",
   };
 
-  const extension = fileName
-    .split(/[#?]/)[0]
-    .split(".")
-    .pop()
-    ?.toLowerCase();
+  const extension = fileName.split(/[#?]/)[0].split(".").pop()?.toLowerCase();
 
   if (!extension || !mimeTypes[extension]) return null;
 
@@ -130,20 +126,18 @@ async function showMedia(
   let cycle = 0;
   const k = lookahead;
 
-  for await (
-    const urls of take(
-      iterateUserMedia(
-        baseDomain,
-        baseApiPath,
-        serviceName,
-        userId,
-        from,
-        to,
-        limit,
-      ),
-      k,
-    )
-  ) {
+  for await (const urls of take(
+    iterateUserMedia(
+      baseDomain,
+      baseApiPath,
+      serviceName,
+      userId,
+      from,
+      to,
+      limit,
+    ),
+    k,
+  )) {
     console.log("Cycle: %s", cycle);
 
     let loaded = urls.length;

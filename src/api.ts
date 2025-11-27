@@ -14,7 +14,7 @@ export const getUserPosts = async (
   reqUrl.pathname += `${serviceId.trim()}/user/${userId.trim()}/posts`;
   reqUrl.searchParams.append("o", offset.toString());
 
-  return await fetch(reqUrl, {headers: {"Accept":"text/css"}});
+  return await fetch(reqUrl, { headers: { Accept: "text/css" } });
 };
 
 export const iterateUserPosts = async function* (
@@ -26,7 +26,7 @@ export const iterateUserPosts = async function* (
   to: number = 0,
   limit: number = -1,
 ): AsyncGenerator<{ pageIndex: number; page: object }> {
-  for (let i = from; (to == -1 ? true : i <= to); i++) {
+  for (let i = from; to == -1 ? true : i <= to; i++) {
     if (limit == 0) break;
 
     const posts_res = await getUserPosts(
@@ -37,7 +37,7 @@ export const iterateUserPosts = async function* (
       50 * i,
     );
 
-    console.log(posts_res)
+    console.log(posts_res);
     const posts = await posts_res.json();
 
     if (posts.length == 0) break;

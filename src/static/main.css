@@ -63,7 +63,9 @@ button {
   color: #282828;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease;
 }
 
 button:hover {
@@ -94,7 +96,8 @@ button:active {
     padding: 1rem;
   }
 
-  input, button {
+  input,
+  button {
     font-size: 0.9rem;
   }
 }
